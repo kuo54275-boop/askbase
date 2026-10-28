@@ -15,7 +15,7 @@ sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
 
 from app.config import get_settings  # noqa: E402
 from app.db import Repository  # noqa: E402
-from app.llm import build_llm  # noqa: E402
+from app.llm import build_llm_from_settings  # noqa: E402
 from app.rag import RagService  # noqa: E402
 
 
@@ -33,14 +33,7 @@ def main() -> int:
             repo.delete_document(doc.id)
         print("已清空知识库")
 
-    llm = build_llm(
-        settings.effective_llm_provider,
-        settings.deepseek_api_key,
-        settings.deepseek_base_url,
-        settings.chat_model,
-        settings.llm_timeout,
-        settings.llm_max_retries,
-    )
+    llm = build_llm_from_settings(settings)
     service = RagService(settings, repo, llm)
 
     existing = {d.name for d in repo.list_documents()}

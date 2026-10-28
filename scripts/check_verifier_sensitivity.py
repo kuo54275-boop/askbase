@@ -24,7 +24,7 @@ sys.path.insert(0, str(BASE))
 from app.config import get_settings  # noqa: E402
 from app.db import Repository  # noqa: E402
 from app.evaluation import load_cases  # noqa: E402
-from app.llm import build_llm  # noqa: E402
+from app.llm import build_llm_from_settings  # noqa: E402
 from app.models import Source  # noqa: E402
 from app.rag import RagService  # noqa: E402
 from app.verify import verify_answer  # noqa: E402
@@ -61,14 +61,7 @@ async def main() -> int:
     settings = get_settings()
     repo = Repository(settings.db_path)
     repo.init_db()
-    llm = build_llm(
-        settings.effective_llm_provider,
-        settings.deepseek_api_key,
-        settings.deepseek_base_url,
-        settings.chat_model,
-        settings.llm_timeout,
-        settings.llm_max_retries,
-    )
+    llm = build_llm_from_settings(settings)
     service = RagService(settings, repo, llm)
     service.refresh_index()
 

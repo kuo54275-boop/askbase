@@ -34,12 +34,13 @@ from app.rag import RagService  # noqa: E402
 from app.verify import verify_answer  # noqa: E402
 
 
-def client(settings, model: str):
+def client(settings, model: str = ""):
+    """构造指定模型的客户端；model 为空时用用户配置的默认模型。"""
     return build_llm(
         settings.effective_llm_provider,
-        settings.deepseek_api_key,
-        settings.deepseek_base_url,
-        model,
+        settings.active_api_key,
+        settings.active_base_url,
+        model or settings.active_model,
         settings.llm_timeout,
         settings.llm_max_retries,
     )

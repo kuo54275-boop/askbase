@@ -22,10 +22,18 @@ class Settings(BaseSettings):
     )
 
     # ---------- 大模型 ----------
+    # 方式 A（通用）：任何 OpenAI 兼容端点 —— OpenAI / 通义 / Kimi / 智谱 / 硅基流动 / Ollama / vLLM
+    # 只要填了 LLM_API_KEY + LLM_BASE_URL，就优先用这套，DEEPSEEK_* 会被忽略
+    llm_api_key: str = ""
+    llm_base_url: str = ""
+    llm_model: str = ""
+
+    # 方式 B（DeepSeek 专用，历史配置，仍然兼容）
     deepseek_api_key: str = ""
     deepseek_base_url: str = "https://api.deepseek.com"
     chat_model: str = "deepseek-chat"
-    # auto: 有 key 用 DeepSeek，没 key 自动降级为 Mock（保证任何环境都能跑起来）
+
+    # auto: 有 key 用真实模型，没 key 自动降级 Mock（保证任何环境都能跑起来）
     llm_provider: str = "auto"
     llm_timeout: float = 60.0
     llm_max_retries: int = 2
@@ -78,10 +86,35 @@ class Settings(BaseSettings):
 
     @property
     def effective_llm_provider(self) -> str:
-        """把 auto 解析成真实 provider。"""
+        """把 auto 解析成真实 provider。
+
+        优先级：显式指定 > 通用 OpenAI 兼容配置 > DeepSeek 专用配置 > Mock。
+        """
         if self.llm_provider != "auto":
             return self.llm_provider
-        return "deepseek" if self.deepseek_api_key.strip() else "mock"
+        if self.llm_api_key.strip() and self.llm_base_url.strip():
+            return "openai"
+        if self.deepseek_api_key.strip():
+            return "deepseek"
+        return "mock"
+
+    # 下面三个属性把两套配置收敛成一份，调用方不用关心用户填的是哪种
+    @property
+    def active_api_key(self) -> str:
+        return self.llm_api_key.strip() or self.deepseek_api_key.strip()
+
+    @property
+    def active_base_url(self) -> str:
+        return (self.llm_base_url.strip() or self.deepseek_base_url).rstrip("/")
+
+    @property
+    def active_model(self) -> str:
+        return self.llm_model.strip() or self.chat_model
+
+    @property
+    def is_configured(self) -> bool:
+        """是否已接入真实模型（未接入时跑 Mock）。"""
+        return self.effective_llm_provider != "mock"
 
     def ensure_dirs(self) -> None:
         for p in (self.data_dir, self.docs_dir, self.samples_dir):

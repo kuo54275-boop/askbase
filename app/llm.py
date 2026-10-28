@@ -163,7 +163,7 @@ class MockClient:
     name = "mock"
 
     def __init__(self) -> None:
-        self._note = "（Mock 模式：未配置 DEEPSEEK_API_KEY，以下内容由检索结果抽取生成）\n\n"
+        self._note = "（Mock 模式：未配置 API Key，以下内容由检索结果抽取生成）\n\n"
 
     async def stream(
         self,
@@ -222,7 +222,7 @@ class MockClient:
             self._note
             + "根据知识库检索结果：\n\n"
             + "\n".join(picked)
-            + "\n\n（如需完整生成式回答，请配置 DEEPSEEK_API_KEY）"
+            + "\n\n（如需完整生成式回答，请在 .env 里配置 LLM_API_KEY）"
         )
 
 
@@ -324,10 +324,33 @@ def build_llm(
     timeout: float,
     max_retries: int,
 ) -> LLMClient:
-    """根据配置构造客户端；provider 已经是解析过的真实值（deepseek / mock）。"""
-    if provider == "deepseek":
-        return DeepSeekClient(api_key, base_url, model, timeout, max_retries)
-    return MockClient()
+    """根据配置构造客户端；provider 是解析过的真实值（openai / deepseek / mock）。"""
+    if provider == "mock":
+        return MockClient()
+    # openai 和 deepseek 走同一套协议，只是端点不同
+    return DeepSeekClient(
+        api_key=api_key,
+        base_url=base_url,
+        model=model,
+        timeout=timeout,
+        max_retries=max_retries,
+        name=provider if provider != "deepseek" else "deepseek",
+    )
+
+
+def build_llm_from_settings(settings) -> LLMClient:
+    """从 Settings 构造主模型客户端，屏蔽"用户填的是通用配置还是 DeepSeek 专用"。
+
+    BYOK 的核心入口：谁填了 key 就用谁的，没填就用 Mock。
+    """
+    return build_llm(
+        provider=settings.effective_llm_provider,
+        api_key=settings.active_api_key,
+        base_url=settings.active_base_url,
+        model=settings.active_model,
+        timeout=settings.llm_timeout,
+        max_retries=settings.llm_max_retries,
+    )
 
 
 def build_judge_llm(settings) -> LLMClient | None:

@@ -30,7 +30,7 @@ from app.config import get_settings  # noqa: E402
 from app.db import Repository  # noqa: E402
 from app.evaluation import load_cases  # noqa: E402
 from app.judge import LLMJudge, extract_citations, is_refusal  # noqa: E402
-from app.llm import build_llm  # noqa: E402
+from app.llm import build_llm_from_settings  # noqa: E402
 from app.rag import RagService  # noqa: E402
 
 
@@ -65,16 +65,9 @@ async def main() -> int:
     settings = get_settings()
     repo = Repository(settings.db_path)
     repo.init_db()
-    llm = build_llm(
-        settings.effective_llm_provider,
-        settings.deepseek_api_key,
-        settings.deepseek_base_url,
-        settings.chat_model,
-        settings.llm_timeout,
-        settings.llm_max_retries,
-    )
+    llm = build_llm_from_settings(settings)
     if llm.name == "mock":
-        print("当前是 Mock 模式，生成质量评测无意义，请先配置 DEEPSEEK_API_KEY")
+        print("当前是 Mock 模式，生成质量评测无意义，请先在 .env 配置 LLM_API_KEY")
         return 1
 
     service = RagService(settings, repo, llm)

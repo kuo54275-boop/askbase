@@ -15,7 +15,7 @@ from fastapi.staticfiles import StaticFiles
 from .api import chat, docs, eval_api
 from .config import BASE_DIR, Settings, get_settings
 from .db import Repository
-from .llm import build_llm
+from .llm import build_llm_from_settings
 from .models import HealthInfo
 from .rag import RagService
 
@@ -30,14 +30,7 @@ def create_app(settings: Settings | None = None) -> FastAPI:
     repo = Repository(settings.db_path)
     repo.init_db()
 
-    llm = build_llm(
-        provider=settings.effective_llm_provider,
-        api_key=settings.deepseek_api_key,
-        base_url=settings.deepseek_base_url,
-        model=settings.chat_model,
-        timeout=settings.llm_timeout,
-        max_retries=settings.llm_max_retries,
-    )
+    llm = build_llm_from_settings(settings)
     service = RagService(settings, repo, llm)
 
     @asynccontextmanager

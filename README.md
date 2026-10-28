@@ -3,6 +3,8 @@
 > 一个基于 RAG 的大模型应用：上传文档 → 混合检索 → 重排 → 带引用的流式回答。
 >
 > Python 3.11+ / FastAPI / DeepSeek / SQLite，**克隆下来 3 条命令就能跑**，没有 API Key 也能演示。
+>
+> 仓库不含任何密钥，模型用你自己的 Key（BYOK）——任何 OpenAI 兼容端点都支持。
 
 **[快速开始](#快速开始)** · **[架构](#架构)** · **[评测数据](#评测结果)** · **[设计取舍](#设计决策面试可以直接讲的部分)** · **[已知限制](#已知限制)**
 
@@ -106,20 +108,57 @@ uvicorn app.main:app --reload
 
 此时**没有配 API Key 也能用**：会自动进入 Mock 模式，从检索结果里抽取答案，链路完全一样。
 
-配置真实模型：
+---
+
+## 接入你自己的 API Key（BYOK）
+
+这个仓库**不含任何 Key**，所有调用都走你本地的 `.env`。三步接入：
 
 ```bash
-copy .env.example .env      # Windows；macOS/Linux 用 cp .env.example .env
-# 填入 DEEPSEEK_API_KEY 后重启
+cp .env.example .env        # Windows: copy .env.example .env
 ```
 
-Key 申请：<https://platform.deepseek.com/api_keys>
+编辑 `.env`，只改这三行（任何 OpenAI 兼容服务都行）：
+
+```ini
+LLM_API_KEY=sk-你的key
+LLM_BASE_URL=https://api.deepseek.com
+LLM_MODEL=deepseek-chat
+```
+
+重启服务，`/healthz` 里的 `llm_provider` 会从 `mock` 变成你配置的 provider。
+
+### 常见厂商取值
+
+| 厂商 | `LLM_BASE_URL` | `LLM_MODEL` | 申请地址 |
+|---|---|---|---|
+| DeepSeek | `https://api.deepseek.com` | `deepseek-chat` | <https://platform.deepseek.com/api_keys> |
+| 通义千问 | `https://dashscope.aliyuncs.com/compatible-mode/v1` | `qwen-plus` | <https://bailian.console.aliyun.com/> |
+| 智谱 GLM | `https://open.bigmodel.cn/api/paas/v4` | `glm-4-flash` | <https://open.bigmodel.cn/> |
+| Kimi | `https://api.moonshot.cn/v1` | `moonshot-v1-8k` | <https://platform.moonshot.cn/> |
+| 硅基流动 | `https://api.siliconflow.cn/v1` | `Qwen/Qwen2.5-7B-Instruct` | <https://cloud.siliconflow.cn/> |
+| OpenAI | `https://api.openai.com/v1` | `gpt-4o-mini` | <https://platform.openai.com/api-keys> |
+| 本地 Ollama | `http://localhost:11434/v1` | `qwen2.5:7b` | 本地跑，无需 Key（填任意占位串） |
+
+> 也兼容旧的 DeepSeek 专用写法：只填 `DEEPSEEK_API_KEY` 即可，不用改其他配置。
+> 两套都填时以 `LLM_*` 为准。
+
+### 关于 Key 的三件事
+
+1. **不会进仓库**：`.env` 在 `.gitignore` 里，`git ls-files` 里只有 `.env.example`。CI 里也有检查。
+2. **不会上传到别处**：Key 只在你的机器上，被发给你自己选的那家服务商。
+3. **没填就降级**：自动用 Mock 模式，功能全通、不报错——方便先看效果再决定接哪家。
+
+**成本参考**：`deepseek-chat` 处理一次问答（约 3k 输入 + 300 输出 token）约 ¥0.001，一千次问答约 1 元。
+`glm-4-flash` 免费。评测脚本会真实调用模型，跑一轮 50 条约几分钱。
+
+---
 
 ### 常见问题
 
 | 现象 | 原因与解法 |
 |---|---|
-| 回答是「Mock 模式…抽取生成」 | 没配 `DEEPSEEK_API_KEY`，或 `.env` 不在项目根目录 |
+| 回答是「Mock 模式…抽取生成」 | 没配 `LLM_API_KEY`（或 `DEEPSEEK_API_KEY`），或 `.env` 不在项目根目录 |
 | 装依赖很慢/超时 | 加国内镜像：`pip install -r requirements.txt -i https://pypi.tuna.tsinghua.edu.cn/simple` |
 | Windows 终端中文乱码 | `chcp 65001` 切到 UTF-8，或设置 `$env:PYTHONIOENCODING="utf-8"` |
 | 端口 8000 被占用 | `uvicorn app.main:app --port 8010` |
@@ -127,7 +166,7 @@ Key 申请：<https://platform.deepseek.com/api_keys>
 | 想清空知识库重来 | `python scripts/seed.py --reset`，或删掉 `data/app.db` |
 
 > **验证方式**：本项目做过「干净克隆」测试——用 `git checkout-index` 导出一份不含 `.env`、不含 `data/app.db`
-> 的副本，从零执行 `seed.py` → `pytest`（71 通过）→ 启动服务 → 端到端问答，全部通过。
+> 的副本，从零执行 `seed.py` → `pytest`（76 通过）→ 启动服务 → 端到端问答，全部通过。
 > 也就是说，你 clone 下来照着上面三步做，一定跑得起来。
 
 ### Docker（未在本机验证）
@@ -142,7 +181,7 @@ docker run -p 8000:8000 askbase
 ### 常用命令
 
 ```bash
-python -m pytest -q                 # 71 个单测 / 集成测试
+python -m pytest -q                 # 76 个单测 / 集成测试
 python eval/run_eval.py             # 离线评测（不消耗 token）
 python scripts/smoke.py             # 端到端自检（服务需已启动）
 python scripts/seed.py --reset      # 重置知识库

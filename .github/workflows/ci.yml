@@ -16,6 +16,20 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
+      # 这个仓库是 BYOK 的：Key 只存在于用户本地的 .env，绝不该出现在仓库里。
+      # 一旦有人误提交，这里会直接失败，避免密钥泄漏。
+      - name: Ensure no secrets committed
+        run: |
+          if git ls-files --error-unmatch .env > /dev/null 2>&1; then
+            echo "::error::.env 被提交了！请删除并立刻轮换你的 API Key。"
+            exit 1
+          fi
+          if git grep -nEI 'sk-[A-Za-z0-9_-]{20,}' -- . ':!.env.example' ':!*.md'; then
+            echo "::error::仓库中疑似出现真实 API Key，请轮换并移除。"
+            exit 1
+          fi
+          echo "没有发现被提交的密钥 ✓"
+
       - name: Set up Python
         uses: actions/setup-python@v5
         with:

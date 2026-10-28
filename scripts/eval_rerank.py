@@ -22,7 +22,7 @@ sys.path.insert(0, str(BASE))
 from app.config import get_settings  # noqa: E402
 from app.db import Repository  # noqa: E402
 from app.evaluation import load_cases  # noqa: E402
-from app.llm import build_llm  # noqa: E402
+from app.llm import build_llm_from_settings  # noqa: E402
 from app.rag import RagService  # noqa: E402
 
 KS = (1, 3, 5)
@@ -72,16 +72,9 @@ async def main() -> int:
     settings = get_settings()
     repo = Repository(settings.db_path)
     repo.init_db()
-    llm = build_llm(
-        settings.effective_llm_provider,
-        settings.deepseek_api_key,
-        settings.deepseek_base_url,
-        settings.chat_model,
-        settings.llm_timeout,
-        settings.llm_max_retries,
-    )
+    llm = build_llm_from_settings(settings)
     if llm.name == "mock":
-        print("当前是 Mock 模式，重排无意义，请先配置 DEEPSEEK_API_KEY")
+        print("当前是 Mock 模式，重排无意义，请先在 .env 配置 LLM_API_KEY")
         return 1
 
     cases = load_cases(BASE / "eval" / "qa_set.jsonl")
