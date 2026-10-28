@@ -1,5 +1,7 @@
 # AskBase · 企业知识库问答系统
 
+![CI](https://github.com/kuo54275-boop/askbase/actions/workflows/ci.yml/badge.svg)
+
 > 一个基于 RAG 的大模型应用：上传文档 → 混合检索 → 重排 → 带引用的流式回答。
 >
 > Python 3.11+ / FastAPI / DeepSeek / SQLite，**克隆下来 3 条命令就能跑**，没有 API Key 也能演示。
