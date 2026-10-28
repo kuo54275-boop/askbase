@@ -91,7 +91,23 @@ python scripts/seed.py && uvicorn app.main:app --reload
 
 **环境要求**：Python 3.11+、能联网装依赖。不需要 GPU、不需要 Docker、不需要单独装数据库。
 
-### 跑起来（4 条命令）
+### 最省事：一键启动
+
+**Windows**：双击项目根目录的 `start.bat`。
+
+**macOS / Linux**：
+
+```bash
+bash start.sh          # 想换端口：bash start.sh 8010
+```
+
+它会自动完成这一串：检查 Python → 首次创建虚拟环境并装依赖 → 导入示例文档 → 启动服务 → 打开浏览器。
+终端里能看到每一步的进度和访问地址。
+
+> 只有首次运行需要装依赖（几分钟），之后每次启动都是秒开。
+> 脚本里**不含任何密钥**，`.env` 仍然由你自己创建。
+
+### 手动启动（4 条命令）
 
 **Windows（PowerShell）**
 
