@@ -89,24 +89,79 @@ python scripts/seed.py && uvicorn app.main:app --reload
 
 ## 快速开始
 
+**环境要求**：Python 3.11+、能联网装依赖。不需要 GPU、不需要 Docker、不需要单独装数据库。
+
+### 跑起来（4 条命令）
+
+**Windows（PowerShell）**
+
+```powershell
+git clone <this-repo> && cd <this-repo>
+
+python -m venv .venv
+.\.venv\Scripts\python.exe -m pip install -r requirements.txt
+
+.\.venv\Scripts\python.exe scripts\seed.py
+.\.venv\Scripts\python.exe -m uvicorn app.main:app --port 8000
+```
+
+**macOS / Linux**
+
 ```bash
 git clone <this-repo> && cd <this-repo>
 
-# 1. 安装依赖
-python -m venv .venv
-.venv\Scripts\activate          # macOS/Linux: source .venv/bin/activate
+python3 -m venv .venv
+source .venv/bin/activate
 pip install -r requirements.txt
 
-# 2. 导入示例文档（7 篇：员工手册、财务制度、采购办法、客服 SLA、研发规范、产品手册、IT 指南）
 python scripts/seed.py
-
-# 3. 启动
-uvicorn app.main:app --reload
+uvicorn app.main:app --port 8000
 ```
 
-打开 <http://127.0.0.1:8000>。
+> Windows 下特意用 `.\.venv\Scripts\python.exe` 的完整路径，有两个好处：
+> 一是绕开 PowerShell 的脚本执行策略限制，二是不会误用系统里的 Python。
+> 如果你已经用 `.\.venv\Scripts\activate` 激活了虚拟环境，下面所有 `python xxx` 都可以直接写。
 
-此时**没有配 API Key 也能用**：会自动进入 Mock 模式，从检索结果里抽取答案，链路完全一样。
+启动成功的标志是终端最后出现这一行：
+
+```
+INFO:     Uvicorn running on http://127.0.0.1:8000 (Press CTRL+C to quit)
+```
+
+然后浏览器打开 <http://127.0.0.1:8000>。
+
+> 如果提示 `Address already in use`，说明端口被占用，换个端口启动：`--port 8010`。
+
+### 跑起来之后做什么
+
+左边是知识库（已预置 7 篇示例文档），中间直接提问；也可以上传自己的 PDF / DOCX / MD / TXT。
+
+| 试一下 | 你会看到 |
+|---|---|
+| `报销需要提交哪些材料？` | 带 `[1]` 角标的回答，点角标定位到原文 |
+| 接着问 `那没休完怎么办？` | 自动改写追问（`年假没休完怎么办？`）再检索 |
+| `公司的股票代码是多少？` | 明确回答"资料中未提及"，不编造 |
+| 点左下角「运行离线评测」 | 53 条标注集的 Recall@1/@3/@5 与 MRR |
+
+### 确认一切正常
+
+> 下表中的 `python` 指**已激活的虚拟环境**里的解释器；没激活就换成 `.\.venv\Scripts\python.exe`。
+
+| 检查 | 命令 / 地址 | 期望结果 |
+|---|---|---|
+| 服务状态 | 浏览器开 `/healthz` | `{"status":"ok","llm_provider":"deepseek",...}` |
+| 单元测试 | `python -m pytest` | `76 passed` |
+| 检索评测 | `python eval/run_eval.py` | `Recall@1: 94.34%` |
+| 端到端自检 | `python scripts/smoke.py` | `端到端链路正常` |
+
+> `/healthz` 里 `llm_provider` 是 `mock` 不用慌——那是**没配 Key 时的正常降级**，
+> 功能全部可用，只是答案由检索结果抽取生成。接入真实模型见下一节。
+
+### 停止与重启
+
+- **停止**：终端里按 `Ctrl+C`
+- **重启**：再执行一次启动命令，知识库（`data/app.db`）会保留
+- **改代码自动重载**：启动命令加 `--reload`（每次改动自动重启，首次加载稍慢）
 
 ---
 
@@ -154,22 +209,25 @@ LLM_MODEL=deepseek-chat
 
 ---
 
-### 常见问题
+## 常见问题
 
 | 现象 | 原因与解法 |
 |---|---|
 | 回答是「Mock 模式…抽取生成」 | 没配 `LLM_API_KEY`（或 `DEEPSEEK_API_KEY`），或 `.env` 不在项目根目录 |
+| 页面打不开 | 终端没出现 `Uvicorn running on ...`，或访问的不是启动时打印的端口 |
 | 装依赖很慢/超时 | 加国内镜像：`pip install -r requirements.txt -i https://pypi.tuna.tsinghua.edu.cn/simple` |
-| Windows 终端中文乱码 | `chcp 65001` 切到 UTF-8，或设置 `$env:PYTHONIOENCODING="utf-8"` |
-| 端口 8000 被占用 | `uvicorn app.main:app --port 8010` |
+| `No module named pip` | venv 创建时 pip 没装上：`.\.venv\Scripts\python.exe -m ensurepip --upgrade`，或重建 `python -m venv .venv --clear` |
+| Windows 终端中文乱码 | 先执行 `chcp 65001`，或设置 `$env:PYTHONIOENCODING="utf-8"` |
+| `Address already in use` | 端口被占，换一个：`--port 8010` |
 | 上传 PDF 提示解析失败 | 扫描版 PDF 没有文本层，需要 OCR（见「已知限制」） |
 | 想清空知识库重来 | `python scripts/seed.py --reset`，或删掉 `data/app.db` |
+| `--reload` 报 `PermissionError` | 某些受限环境不允许创建命名管道，去掉 `--reload` 即可 |
 
 > **验证方式**：本项目做过「干净克隆」测试——用 `git checkout-index` 导出一份不含 `.env`、不含 `data/app.db`
 > 的副本，从零执行 `seed.py` → `pytest`（76 通过）→ 启动服务 → 端到端问答，全部通过。
 > 也就是说，你 clone 下来照着上面三步做，一定跑得起来。
 
-### Docker（未在本机验证）
+## Docker（未在本机验证）
 
 ```bash
 docker build -t askbase .
@@ -178,14 +236,7 @@ docker run -p 8000:8000 askbase
 
 > 本机没有 Docker 环境，这条路径没有实际跑过。能跑 Python 的话，建议优先用上面的方式。
 
-### 常用命令
-
-```bash
-python -m pytest -q                 # 76 个单测 / 集成测试
-python eval/run_eval.py             # 离线评测（不消耗 token）
-python scripts/smoke.py             # 端到端自检（服务需已启动）
-python scripts/seed.py --reset      # 重置知识库
-```
+---
 
 ---
 
