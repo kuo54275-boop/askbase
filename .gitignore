@@ -29,6 +29,9 @@ wheels/
 # 个人开发记录（不放进公开仓库；想公开可自行移出）
 TODO.md
 
+# 本地打包产物（release/AskBase 与 zip，用于上传 GitHub）
+release/
+
 # 编辑器
 .vscode/
 .idea/
