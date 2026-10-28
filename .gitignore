@@ -1,0 +1,35 @@
+# Python
+__pycache__/
+*.py[cod]
+.venv/
+venv/
+.pytest_cache/
+tests/.tmp/
+
+# 运行时数据（clone 后由 scripts/seed.py 生成）
+data/docs/
+data/app.db
+data/app.db-journal
+data/app.db-wal
+data/app.db-shm
+
+# 临时目录
+.tmp/
+.tmp2/
+.tmp3/
+pytest-cache-files-*/
+_patch/
+_vendor_test/
+_probe.txt
+wheels/
+
+# 本地配置（含 API Key，绝不提交）
+.env
+
+# 个人开发记录（不放进公开仓库；想公开可自行移出）
+TODO.md
+
+# 编辑器
+.vscode/
+.idea/
+.DS_Store

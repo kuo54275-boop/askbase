@@ -1,0 +1,6 @@
+# 只用于 pytest 配置；项目通过 requirements.txt 安装依赖，不需要打包
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+pythonpath = ["."]
+addopts = "-q -p no:cacheprovider"
+filterwarnings = ["ignore::DeprecationWarning"]

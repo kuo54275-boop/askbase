@@ -1,0 +1,53 @@
+{"question": "报销需要提交哪些材料？", "gold_doc": "员工手册.md", "answer_keywords": ["发票", "消费明细"]}
+{"question": "报销单超过多少钱需要部门负责人签字？", "gold_doc": "员工手册.md", "answer_keywords": ["5000"]}
+{"question": "年假有几天，没休完能结转到明年吗？", "gold_doc": "员工手册.md", "answer_keywords": ["5 天", "结转"]}
+{"question": "出差住宿一线城市的报销上限是多少？", "gold_doc": "员工手册.md", "answer_keywords": ["600"]}
+{"question": "每天上班最晚可以几点到公司？", "gold_doc": "员工手册.md", "answer_keywords": ["10:00"]}
+{"question": "产品支持哪几种部署方式？", "gold_doc": "产品手册.md", "answer_keywords": ["私有化部署", "SaaS"]}
+{"question": "私有化部署的最低服务器配置要求是什么？", "gold_doc": "产品手册.md", "answer_keywords": ["32GB", "8 核"]}
+{"question": "接口限流超出后会返回什么状态码？", "gold_doc": "产品手册.md", "answer_keywords": ["429"]}
+{"question": "SaaS 版问答怎么收费？", "gold_doc": "产品手册.md", "answer_keywords": ["0.05"]}
+{"question": "忘记打卡一个月能补几次？", "gold_doc": "员工手册.md", "answer_keywords": ["3 次"]}
+{"question": "VPN 地址是什么，连续多久不登录会被停用？", "gold_doc": "IT服务指南.txt", "answer_keywords": ["vpn.yunque-tech.com", "90 天"]}
+{"question": "P0 级故障多久内必须恢复？", "gold_doc": "IT服务指南.txt", "answer_keywords": ["2 小时"]}
+{"question": "电脑丢了要在多长时间内上报？", "gold_doc": "IT服务指南.txt", "answer_keywords": ["2 小时"]}
+{"question": "审计日志保留多久？", "gold_doc": "产品手册.md", "answer_keywords": ["180 天"]}
+{"question": "出差住酒店最多能报销多少钱？", "gold_doc": "员工手册.md", "answer_keywords": ["600"]}
+{"question": "公司配的电脑内存有多大？", "gold_doc": "员工手册.md", "answer_keywords": ["16GB"]}
+{"question": "请求太频繁会被怎么处理？", "gold_doc": "产品手册.md", "answer_keywords": ["429"]}
+{"question": "上传的文件在服务器上是加密保存的吗？", "gold_doc": "产品手册.md", "answer_keywords": ["AES-256"]}
+{"question": "离职的时候电脑要还给公司吗？", "gold_doc": "IT服务指南.txt", "answer_keywords": ["归还"]}
+{"question": "打印出来的文件怎么领取？", "gold_doc": "IT服务指南.txt", "answer_keywords": ["扫码"]}
+{"question": "数据一般多久会自动清除？", "gold_doc": "产品手册.md", "answer_keywords": ["90 天"]}
+{"question": "年度预算最晚什么时候提交？", "gold_doc": "财务制度.md", "answer_keywords": ["12 月 15 日"]}
+{"question": "支出超出预算会怎么审批？", "gold_doc": "财务制度.md", "answer_keywords": ["10%"]}
+{"question": "对公付款要经过哪些人审批？", "gold_doc": "财务制度.md", "answer_keywords": ["财务总监"]}
+{"question": "公司每周哪几天安排付款？", "gold_doc": "财务制度.md", "answer_keywords": ["周二"]}
+{"question": "发票弄丢了还能报销吗？", "gold_doc": "财务制度.md", "answer_keywords": ["丢失证明"]}
+{"question": "员工因公借款最多借多少，多久要还？", "gold_doc": "财务制度.md", "answer_keywords": ["2 万元"]}
+{"question": "部门备用金的额度上限是多少？", "gold_doc": "财务制度.md", "answer_keywords": ["5 万元"]}
+{"question": "客户回款应该打到哪里？", "gold_doc": "财务制度.md", "answer_keywords": ["对公账户"]}
+{"question": "采购五万块钱的东西需要几家报价？", "gold_doc": "采购管理办法.md", "answer_keywords": ["3 家"]}
+{"question": "多少钱以上的采购必须公开招标？", "gold_doc": "采购管理办法.md", "answer_keywords": ["30 万元"]}
+{"question": "新供应商准入要提供哪些材料？", "gold_doc": "采购管理办法.md", "answer_keywords": ["营业执照"]}
+{"question": "采购合同要 CEO 审批的金额门槛是多少？", "gold_doc": "采购管理办法.md", "answer_keywords": ["100 万元"]}
+{"question": "采购合同的预付比例上限是多少？", "gold_doc": "采购管理办法.md", "answer_keywords": ["30%"]}
+{"question": "质保金一般留多少，质保期多久？", "gold_doc": "采购管理办法.md", "answer_keywords": ["10%", "12 个月"]}
+{"question": "采购到货验收不合格该怎么处理？", "gold_doc": "采购管理办法.md", "answer_keywords": ["5 个工作日"]}
+{"question": "把采购拆开来做会有什么后果？", "gold_doc": "采购管理办法.md", "answer_keywords": ["绩效"]}
+{"question": "P1 工单多久必须响应？", "gold_doc": "客户服务SLA.md", "answer_keywords": ["15 分钟"]}
+{"question": "界面小问题这类 P3 工单多久要解决？", "gold_doc": "客户服务SLA.md", "answer_keywords": ["3 个工作日"]}
+{"question": "当月可用性只有 98% 能赔多少？", "gold_doc": "客户服务SLA.md", "answer_keywords": ["30%"]}
+{"question": "赔付是以什么形式发放，什么时候申请？", "gold_doc": "客户服务SLA.md", "answer_keywords": ["代金券"]}
+{"question": "客服热线电话是多少？", "gold_doc": "客户服务SLA.md", "answer_keywords": ["400-800-1234"]}
+{"question": "满意度低于多少分要参加复训？", "gold_doc": "客户服务SLA.md", "answer_keywords": ["4.2"]}
+{"question": "一个 PR 需要几个人同意才能合并？", "gold_doc": "研发规范.md", "answer_keywords": ["2 名"]}
+{"question": "单元测试覆盖率要多少才能合并代码？", "gold_doc": "研发规范.md", "answer_keywords": ["60%"]}
+{"question": "常规发版时间是每周什么时候？", "gold_doc": "研发规范.md", "answer_keywords": ["14:00"]}
+{"question": "灰度发布是按什么节奏放量的？", "gold_doc": "研发规范.md", "answer_keywords": ["5%"]}
+{"question": "P1 故障多久内要完成复盘？", "gold_doc": "研发规范.md", "answer_keywords": ["3 个工作日"]}
+{"question": "同类故障多长时间内重复发生算改进没闭环？", "gold_doc": "研发规范.md", "answer_keywords": ["6 个月"]}
+{"question": "单个 PR 建议控制在多少行以内？", "gold_doc": "研发规范.md", "answer_keywords": ["400 行"]}
+{"question": "紧急修复上线后需要补什么？", "gold_doc": "研发规范.md", "answer_keywords": ["24 小时"]}
+{"question": "P2 工单的服务时间到几点？", "gold_doc": "客户服务SLA.md", "answer_keywords": ["21:00"]}
+{"question": "合同盖章要走什么申请流程？", "gold_doc": "采购管理办法.md", "answer_keywords": ["用印申请"]}
