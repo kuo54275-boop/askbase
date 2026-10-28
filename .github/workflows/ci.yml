@@ -1,0 +1,41 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        python-version: ["3.11", "3.12"]
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: ${{ matrix.python-version }}
+          cache: pip
+
+      - name: Install dependencies
+        run: pip install -r requirements.txt
+
+      - name: Unit & integration tests
+        run: python -m pytest
+
+      - name: Ingest sample docs
+        run: python scripts/seed.py
+
+      - name: Retrieval evaluation (no API key needed)
+        run: python eval/run_eval.py
+
+      - name: Smoke test (Mock mode, no API key)
+        run: |
+          python -m uvicorn app.main:app --host 127.0.0.1 --port 8000 &
+          sleep 5
+          python scripts/smoke.py --base http://127.0.0.1:8000
