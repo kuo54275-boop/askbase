@@ -8,13 +8,22 @@
 
 **[快速开始](#快速开始)** · **[架构](#架构)** · **[评测数据](#评测结果)** · **[设计取舍](#设计决策面试可以直接讲的部分)** · **[已知限制](#已知限制)**
 
+## 30 秒上手
+
 ```bash
 git clone <this-repo> && cd <this-repo>
-pip install -r requirements.txt
-python scripts/seed.py && uvicorn app.main:app --reload
+
+pip install -r requirements.txt        # 建议先建虚拟环境，见下方「快速开始」
+cp .env.example .env                   # Windows: copy .env.example .env
+#  ↑ 打开 .env，把 LLM_API_KEY / LLM_BASE_URL / LLM_MODEL 换成你自己的
+
+python scripts/seed.py                 # 导入 7 篇示例文档
+uvicorn app.main:app --port 8000
 ```
 
-打开 <http://127.0.0.1:8000> 即可对话。**不配 API Key 也能跑**——会自动进入 Mock 模式。
+打开 <http://127.0.0.1:8000> 就能提问了。
+
+**不填 Key 也能跑**——会自动进入 Mock 模式（答案由检索结果抽取，界面有明确提示）。填了 Key 就是真实模型作答，检索、重排、引用溯源全都一样。
 
 ---
 
